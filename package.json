@@ -1,0 +1,20 @@
+{
+    "name": "FdlCord",
+    "version": "1.0.0",
+    "description": "",
+    "main": "server.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "nodemon server.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "engine.io-parser": "^5.0.3",
+        "express": "^4.17.2",
+        "mime": "^3.0.0",
+        "moment": "^2.29.1",
+        "nodemon": "^2.0.15",
+        "socket.io": "^4.4.1"
+    }
+}
