@@ -1,0 +1,57 @@
+register page 
+
+chat video + chat text page
+
+integrate socketio
+
+Broadcast a message to connected users when someone connects or disconnects.
+
+Add support for nicknames.
+
+Don’t send the same message to the user that sent it. Instead, append the message directly as soon as he/she presses enter.
+
+integrate custom created rooms
+
+integrate rooms with few users
+
+set up text chat
+
+//
+integrate invitation with link generation
+
+	create a route to get invitation link : /inviteToChat?token=uuid
+	create js file to do the rquest
+	show result as button
+	set up copy to clipborad
+	create a route to verify the invitation link
+	send the good url for user
+
+
+set up video streaming / chat video
+
+finalize projects with details
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="form-control">
+                    <label for="room">Room</label>
+                    <select name="room" id="room">
+							<option value="JavaScript">JavaScript</option>
+							<option value="Python">Python</option>
+							<option value="PHP">PHP</option>
+							<option value="C#">C#</option>
+							<option value="Ruby">Ruby</option>
+							<option value="Java">Java</option>
+						</select>
+                </div>

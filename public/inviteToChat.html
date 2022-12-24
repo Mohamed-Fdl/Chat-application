@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="css/style.css" />
+    <title>FdlCord App - Join a room</title>
+</head>
+
+<body>
+    <div class="join-container">
+        <header class="join-header">
+            <h1><i class="fas fa-smile"></i> Join a Room</h1>
+        </header>
+        <main class="join-main">
+            <form action="" id="join-form">
+                <div class="form-control">
+                    <label for="username">Username</label>
+                    <input type="text" name="username" id="username" placeholder="Enter username..." required />
+                </div>
+                <input type="hidden" name="token" id="token" required />
+                <button type="submit" class="btn">Join the Room</button>
+            </form><br>
+        </main>
+    </div>
+</body>
+
+<script>
+    let searchParams = new URLSearchParams(window.location.search)
+
+    let joinForm = document.getElementById('join-form')
+
+    if (searchParams.has('token')) {
+
+        let token = searchParams.get('token')
+
+        let hiddenInput = document.getElementById('token')
+
+        hiddenInput.value = token
+    } else {
+        window.location = '/'
+    }
+
+    joinForm.addEventListener('submit', (e) => {
+        e.preventDefault()
+
+        const msg = e.target.elements.msg.value
+
+        outputMessage({
+            username,
+            time: Date.now(),
+            text: msg
+        })
+
+        socket.emit('ChatMessage', {
+            username,
+            time: Date.now(),
+            text: msg
+        })
+
+        e.target.elements.msg.value = ''
+        e.target.elements.msg.focus()
+
+    })
+</script>
+
+</html>
