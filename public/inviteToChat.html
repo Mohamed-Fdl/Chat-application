@@ -28,6 +28,8 @@
     </div>
 </body>
 
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 <script>
     let searchParams = new URLSearchParams(window.location.search)
 
@@ -44,25 +46,33 @@
         window.location = '/'
     }
 
-    joinForm.addEventListener('submit', (e) => {
+    function getRoomName(token) {
+
+        return axios.get(`http://localhost:3000/invite/${token}`)
+            .then(function(response) {
+                if (response.data.success) {
+                    return response.data.roomName
+                }
+            })
+            .catch(function(error) {
+                console.log(error)
+            })
+    }
+
+    function goChat(roomName, username) {
+        return `http://localhost:3000/chat.html?roomName=${roomName}&username=${username}`
+    }
+
+    joinForm.addEventListener('submit', async(e) => {
         e.preventDefault()
 
-        const msg = e.target.elements.msg.value
+        const username = e.target.elements.username.value
 
-        outputMessage({
-            username,
-            time: Date.now(),
-            text: msg
-        })
+        const token = e.target.elements.token.value
 
-        socket.emit('ChatMessage', {
-            username,
-            time: Date.now(),
-            text: msg
-        })
+        let roomName = await getRoomName(token)
 
-        e.target.elements.msg.value = ''
-        e.target.elements.msg.focus()
+        window.location = goChat(roomName, username)
 
     })
 </script>

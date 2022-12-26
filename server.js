@@ -21,7 +21,7 @@ io.on('connection', (socket) => {
 
         socket.join(info.room)
 
-        Rooms.push({ id: uuidv4(), room: info.room })
+        Rooms.push({ id: uuidv4(), roomName: info.room })
 
         Users.push({ id: socket.id, username: info.username, room: info.room })
 
@@ -82,6 +82,20 @@ app.get('/getInviteLink/:roomName', (req, res) => {
     }
 })
 
+app.get('/invite/:token', (req, res) => {
+
+    try {
+        let room = getRoomByToken(Rooms, req.params.token)
+
+        res.json({ roomName: room.roomName, success: true })
+
+    } catch (error) {
+
+        console.log(error)
+        res.json({ error, success: false })
+    }
+})
+
 
 function getAndDeleteUserDisconnected(users, id) {
     let user
@@ -111,7 +125,17 @@ function getRoomByName(rooms, roomName) {
     let room
 
     rooms.forEach(element => {
-        if (element.room === roomName) room = element
+        if (element.roomName === roomName) room = element
+    });
+
+    return room
+}
+
+function getRoomByToken(rooms, token) {
+    let room
+
+    rooms.forEach(element => {
+        if (element.id === token) room = element
     });
 
     return room
