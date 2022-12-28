@@ -1,5 +1,0 @@
-git push
-
-analyze metrics 
-
-finish project
