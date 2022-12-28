@@ -31,6 +31,8 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 <script>
+    const APP_URL = 'https://47dc-41-138-91-173.ngrok.io'
+
     let searchParams = new URLSearchParams(window.location.search)
 
     let joinForm = document.getElementById('join-form')
@@ -48,7 +50,7 @@
 
     function getRoomName(token) {
 
-        return axios.get(`http://localhost:3000/invite/${token}`)
+        return axios.get(`${APP_URL}/invite/${token}`)
             .then(function(response) {
                 if (response.data.success) {
                     return response.data.roomName
@@ -60,7 +62,7 @@
     }
 
     function goChat(roomName, username) {
-        return `http://localhost:3000/chat.html?roomName=${roomName}&username=${username}`
+        return `${APP_URL}/chat.html?roomName=${roomName}&username=${username}`
     }
 
     joinForm.addEventListener('submit', async(e) => {

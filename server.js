@@ -1,12 +1,23 @@
-const { info } = require('console')
 const express = require('express')
+
 const app = express()
+
 const http = require('http')
+
 const server = http.createServer(app)
+
 const { Server } = require("socket.io")
+
 const io = new Server(server)
+
 const { v4: uuidv4 } = require('uuid')
+
 const config = require('./config')
+
+const moment = require('moment')
+
+const { getAndDeleteUserDisconnected, getRoomByName, getRoomByToken, getUser, getRoomUsers } = require('./helpers')
+
 
 app.use(express.static('public'))
 
@@ -16,7 +27,6 @@ let Rooms = []
 
 io.on('connection', (socket) => {
 
-
     socket.on('userConnected', (info) => {
 
         socket.join(info.room)
@@ -25,9 +35,18 @@ io.on('connection', (socket) => {
 
         Users.push({ id: socket.id, username: info.username, room: info.room })
 
-        console.log('User : ' + info.username + ' connected')
+        console.log('User : ' + info.username + ' is connected')
 
-        socket.broadcast.to(info.room).emit('userConnected', { username: 'FdlBot', time: Date.now(), text: info.username + ' is connected to the room : ' + info.room })
+        socket.broadcast.to(info.room).emit('userConnected', {
+            username: 'FdlBot',
+            time: moment().format('MMMM Do YYYY, h:mm:ss a'),
+            text: info.username + ' is connected to the room.',
+        })
+
+        io.to(info.room).emit('roomUsers', {
+            room: info.room,
+            users: getRoomUsers(Users, info.room)
+        })
     })
 
 
@@ -35,35 +54,30 @@ io.on('connection', (socket) => {
 
         let user = getUser(Users, socket.id)
 
-        console.log('message: ' + msg)
+        msg.time = moment().format('MMMM Do YYYY, h:mm:ss a')
 
-        socket.broadcast.to(user.room).emit('ChatMessage', msg)
+        io.to(user.room).emit('ChatMessage', msg)
     })
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     socket.on('disconnect', () => {
 
-        let user = getAndDeleteUserDisconnected(Users, socket.id)
+        try {
+            let user = getAndDeleteUserDisconnected(Users, socket.id)
 
-        console.log(user.username + ' is disconnected')
+            console.log(user.username + ' is disconnected')
 
-        io.emit('userDisconnected', { username: 'FdlBot', time: Date.now(), text: user.username + ' is disconnected' })
+            io.to(user.room).emit('roomUsers', {
+                room: user.room,
+                users: getRoomUsers(Users, user.room)
+            })
+
+            io.to(user.room).emit('userDisconnected', { username: 'FdlBot', time: moment().format('MMMM Do YYYY, h:mm:ss a'), text: user.username + ' is disconnected' })
+
+        } catch (error) {
+            console.log(error)
+        }
     })
-
-
 })
 
 app.get('/getInviteLink/:roomName', (req, res) => {
@@ -97,50 +111,8 @@ app.get('/invite/:token', (req, res) => {
 })
 
 
-function getAndDeleteUserDisconnected(users, id) {
-    let user
+const PORT = process.env.PORT || 3000
 
-    users.forEach(element => {
-        if (element.id === id) user = element
-    });
-
-    let index = users.indexOf(user)
-
-    users.splice(index, 1)
-
-    return user
-}
-
-function getUser(users, id) {
-    let user
-
-    users.forEach(element => {
-        if (element.id === id) user = element
-    });
-
-    return user
-}
-
-function getRoomByName(rooms, roomName) {
-    let room
-
-    rooms.forEach(element => {
-        if (element.roomName === roomName) room = element
-    });
-
-    return room
-}
-
-function getRoomByToken(rooms, token) {
-    let room
-
-    rooms.forEach(element => {
-        if (element.id === token) room = element
-    });
-
-    return room
-}
-
-server.listen(3000, () => {
-    console.log('listening on *:3000')
+server.listen(PORT, () => {
+    console.log('listening on *: ' + PORT)
 })
